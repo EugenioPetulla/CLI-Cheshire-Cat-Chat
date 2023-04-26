@@ -1,22 +1,48 @@
 import json
 import elements
-from rich import print
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.text import Text
+from threading import Thread
 from websocket import WebSocketApp
 
 
-def user_message(ws):
-    # Ask the user for their response and send it through the websocket
-    user_input = Prompt.ask(Text("\n👤 HUMAN", style="bold"))
-    ws.send(json.dumps({"text": user_input}))
+class UserInputThread(Thread):
+    def __init__(self, ws):
+        Thread.__init__(self)
+        self.ws = ws
+        self.waiting_for_input = False
+
+    def update_console(self, message):
+        # This method will update the console with the cat's response message
+        console.print(f"\r\r🐱 [bold magenta]CHESHIRE CAT: [/bold magenta][bold]{message}[/bold]")
+
+    def run(self):
+        # Wait for user input only if not already waiting for input
+        if not self.waiting_for_input:
+            self.waiting_for_input = True
+            user_input = Prompt.ask(Text("\n👤 HUMAN", style="bold"))
+
+            # Send the user input as a message to the cat
+            console.print("[i yellow]The Cheshire Cat is thinking...[/i yellow]")
+            self.ws.send(json.dumps({"text": user_input}))
+
+    def stop(self):
+        self.waiting_for_input = False
+
 
 def on_message(ws, message):
+    # Set waiting_for_input to False to indicate that we are not waiting for user input
+    user_thread = UserInputThread(ws)
+    user_thread.stop()
+
     # Receiving and printing the cat's response
     cat_response = json.loads(message)
-    print("\n🐱 [bold magenta]CHESHIRE CAT: [/bold magenta][bold]" + cat_response["content"] + "[/bold]")
-    user_message(ws)
+    user_thread.update_console(cat_response["content"])
+
+    # Start the user input thread to ask for new input from the user
+    user_thread = UserInputThread(ws)
+    user_thread.start()
 
 
 def on_error(ws, error):
@@ -27,22 +53,18 @@ def on_error(ws, error):
     console.print("[red bold]Error: " + str(error) + "[/red bold]")
 
 
-def on_close(ws):
-    # Send disconnected message if disconnected
-    console.print("[bold red]Disconnected from chat[/bold red]")
-
-
 def on_ping(ws, ping_data):
     # Send a pong response
-    ws.send("pong")
+    ws.pong()
 
 
 def on_open(ws):
     # Send a full welcome message when connected
     console.print(elements.greetings())
 
-    # Taking user input and sending it through the websocket
-    user_message(ws)
+    # Request user input to start the conversation
+    user_thread = UserInputThread(ws)
+    user_thread.start()
 
 
 def cat_chat():
@@ -51,7 +73,6 @@ def cat_chat():
         ws = WebSocketApp('ws://localhost:1865/ws',
                           on_message=on_message,
                           on_error=on_error,
-                          on_close=on_close,
                           on_open=on_open,
                           on_ping=on_ping)
         # Keep running the connection
