@@ -15,7 +15,7 @@ class UserInputThread(Thread):
 
     def update_console(self, message):
         # This method will update the console with the cat's response message
-        console.print(f"\r\r🐱 [bold magenta]CHESHIRE CAT: [/bold magenta][bold]{message}[/bold]")
+        console.print(f"🐱 [bold magenta]CHESHIRE CAT: [/bold magenta][bold]{message}[/bold]")
 
     def run(self):
         # Wait for user input only if not already waiting for input
@@ -67,6 +67,7 @@ def on_open(ws):
     user_thread.start()
 
 
+# TODO: Def an on_close() function
 def cat_chat():
     try:
         # Create websocket connection
@@ -86,4 +87,4 @@ def cat_chat():
 # Creating a console for rich output
 console = Console()
 
-cat_chat() # Keep reconnecting to the chat in case of errors or disconnection
+cat_chat() # TODO: Keep reconnecting to the chat in case of errors or disconnection
