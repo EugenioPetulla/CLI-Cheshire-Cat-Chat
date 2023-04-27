@@ -1,3 +1,4 @@
+import os
 import json
 import elements
 from threading import Thread
@@ -23,7 +24,15 @@ class UserInputThread(Thread):
         # Wait for user input only if not already waiting for input
         if not self.waiting_for_input:
             self.waiting_for_input = True
+            # TODO: evaluate a ruler for separate chat console.rule("", style="white")
             user_input = Prompt.ask(Text("\n👤 HUMAN", style="bold"))
+
+            # Check for exit command
+            if user_input in ('/exit', '/close'):
+                console.print("[i yellow]Closing connection...[/i yellow]")
+                self.ws.close()  # Close the websocket connection
+                console.print(elements.goodbye(), justify="center")
+                os._exit(1)  # Exit the program
 
             # Send the user input as a message to the cat
             console.print("[i yellow]The Cheshire Cat is thinking...[/i yellow]")
@@ -34,7 +43,7 @@ class UserInputThread(Thread):
 
 
 def on_message(ws, message):
-    # Set waiting_for_input to False to indicate that we are not waiting for user input
+    # Stop the thread when we are not waiting for user input
     user_thread = UserInputThread(ws)
     user_thread.stop()
 
@@ -62,7 +71,7 @@ def on_ping(ws, ping_data):
 
 def on_open(ws):
     # Send a full welcome message when connected
-    console.print(elements.greetings())
+    console.print(elements.greetings(), justify="center")
 
     # Request user input to start the conversation
     user_thread = UserInputThread(ws)
@@ -89,4 +98,4 @@ def cat_chat():
 # Creating a console for rich output
 console = Console()
 
-cat_chat() # TODO: Keep reconnecting to the chat in case of errors or disconnection
+cat_chat()  # TODO: Keep reconnecting to the chat in case of errors or disconnection
