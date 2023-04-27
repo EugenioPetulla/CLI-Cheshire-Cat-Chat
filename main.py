@@ -1,10 +1,11 @@
 import json
 import elements
+from threading import Thread
+from websocket import WebSocketApp
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.text import Text
-from threading import Thread
-from websocket import WebSocketApp
+from rich.markdown import Markdown
 
 
 class UserInputThread(Thread):
@@ -15,7 +16,8 @@ class UserInputThread(Thread):
 
     def update_console(self, message):
         # This method will update the console with the cat's response message
-        console.print(f"🐱 [bold magenta]CHESHIRE CAT: [/bold magenta][bold]{message}[/bold]")
+        console.print(f"🐱 [bold magenta]CHESHIRE CAT:[/bold magenta] ", end="")
+        console.print(Markdown(message))
 
     def run(self):
         # Wait for user input only if not already waiting for input
