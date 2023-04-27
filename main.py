@@ -3,6 +3,7 @@ import json
 import elements
 from threading import Thread
 from websocket import WebSocketApp
+import readline
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.text import Text
