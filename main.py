@@ -18,25 +18,25 @@ class UserInputThread(Thread):
 
     def update_console(self, message):
         # This method will update the console with the cat's response message
-        console.print(f"🐱 [bold magenta]CHESHIRE CAT:[/bold magenta] ", end="")
+        console.rule("\r🐱 [bold magenta]CHESHIRE CAT:[/bold magenta] ", style="magenta")
         console.print(Markdown(message))
 
     def run(self):
         # Wait for user input only if not already waiting for input
         if not self.waiting_for_input:
             self.waiting_for_input = True
-            # TODO: evaluate a ruler for separate chat console.rule("", style="white")
-            user_input = Prompt.ask(Text("\n👤 HUMAN", style="bold"))
+            console.rule("👤 HUMAN", style="white bold")
+            user_input = input()
 
             # Check for exit command
             if user_input in ('/exit', '/close'):
-                console.print("[i yellow]Closing connection...[/i yellow]")
+                console.rule("[i yellow]Closing connection...[/i yellow]")
                 self.ws.close()  # Close the websocket connection
                 console.print(elements.goodbye(), justify="center")
                 os._exit(1)  # Exit the program
 
             # Send the user input as a message to the cat
-            console.print("[i yellow]The Cheshire Cat is thinking...[/i yellow]")
+            console.print("[i yellow]The Cheshire Cat is thinking...[/i yellow]", justify="center")
             self.ws.send(json.dumps({"text": user_input}))
 
     def stop(self):
