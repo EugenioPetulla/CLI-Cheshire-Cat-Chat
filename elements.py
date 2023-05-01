@@ -1,3 +1,5 @@
+from rich.console import Console
+
 def greetings():
     output = "\n[bold green]🍃 😺 The Cheshire Cat has spawned!!! 😺 🍃 [/bold green]\n\n"
     output += "*****************************************\n"
@@ -19,5 +21,15 @@ def goodbye():
     output += "| one day you too will find your way    |\n"
     output += "|                 back to Wonderland.[/i]   |\n"
     output += "*****************************************\n"
+
+    return output
+
+
+def error(error):
+    return "[red bold]Error: " + str(error) + "[/red bold]"
+
+def help():
+    output = "- /help: Show this help message\n"
+    output += "- /exit: Exit the chat"
 
     return output

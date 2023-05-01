@@ -5,55 +5,70 @@ from threading import Thread
 from websocket import WebSocketApp
 import readline
 from rich.console import Console
-from rich.prompt import Prompt
-from rich.text import Text
 from rich.markdown import Markdown
+from halo import Halo
 
+spinner = Halo(text='The Cheshire Cat is thinking...', text_color='yellow', spinner='clock')
 
 class UserInputThread(Thread):
     def __init__(self, ws):
         Thread.__init__(self)
         self.ws = ws
-        self.waiting_for_input = False
 
     def update_console(self, message):
         # This method will update the console with the cat's response message
-        console.rule("\r🐱 [bold magenta]CHESHIRE CAT:[/bold magenta] ", style="magenta")
+        console.print("\n")
+        console.rule("🐱 [bold magenta]CHESHIRE CAT:[/bold magenta] ", style="magenta")
         console.print(Markdown(message))
 
     def run(self):
-        # Wait for user input only if not already waiting for input
-        if not self.waiting_for_input:
-            self.waiting_for_input = True
-            console.rule("👤 HUMAN", style="white bold")
+        while True:
+            console.print("\n")
+            console.rule("👤 [bold]HUMAN[/bold]", style="white")
             user_input = input()
 
             # Check for exit command
-            if user_input in ('/exit', '/close'):
-                console.rule("[i yellow]Closing connection...[/i yellow]")
-                self.ws.close()  # Close the websocket connection
-                console.print(elements.goodbye(), justify="center")
-                os._exit(1)  # Exit the program
+            if user_input.startswith('/'):
+                command = user_input.split()[0]
+                if command == '/exit' or command == '/close':
+                    console.print("\n")
+                    console.rule("🛑 [bold red]CLOSING CONNECTION...[/bold red]")
+                    self.ws.close()  # Close the websocket connection
+                    console.print(elements.goodbye(), justify="center")
+                    os._exit(1)  # Exit the program
+                elif command == '/help':
+                    console.print("\n")
+                    console.rule("[bold yellow] :robot: AVAILABLE COMMANDS[/bold yellow]")
+                    console.print(elements.help())
+                else:
+                    # User entered a non-/ command, break out of the loop and send the message
+                    break
+            else:
+                # User entered a message, break out of the loop and send the message
+                break
 
-            # Send the user input as a message to the cat
-            console.print("[i yellow]The Cheshire Cat is thinking...[/i yellow]", justify="center")
-            self.ws.send(json.dumps({"text": user_input}))
+        # Send the user input as a message to the cat
+        spinner.start()
+        self.ws.send(json.dumps({"text": user_input}))
 
-    def stop(self):
-        self.waiting_for_input = False
+        # Wait for the cat's response
+        self.waiting_for_input = True
+
+        def stop(self):
+            self.waiting_for_input = False
+
 
 
 def on_message(ws, message):
-    # Stop the thread when we are not waiting for user input
-    user_thread = UserInputThread(ws)
-    user_thread.stop()
+    # Stop the spinner and print the cat's response
+    spinner.stop()
+    spinner.clear()
 
-    # Receiving and printing the cat's response
+    user_thread = UserInputThread(ws)
     cat_response = json.loads(message)
     user_thread.update_console(cat_response["content"])
 
     # Start the user input thread to ask for new input from the user
-    user_thread = UserInputThread(ws)
     user_thread.start()
 
 
@@ -62,7 +77,7 @@ def on_error(ws, error):
     if "WebSocketApp' object has no attribute 'pong'" in str(error):
         return
     # Otherwise, print the error message
-    console.print("[red bold]Error: " + str(error) + "[/red bold]")
+    console.print(elements.error(error))
 
 
 def on_ping(ws, ping_data):
@@ -93,8 +108,7 @@ def cat_chat():
 
     except Exception as e:
         console.print_exception()
-        console.print("[red bold]Error: " + str(e) + "[/red bold]")
-
+        console.print(elements.error(e))
 
 # Creating a console for rich output
 console = Console()

@@ -1,3 +1,4 @@
 websockets
 websocket-client
 rich
+halo
