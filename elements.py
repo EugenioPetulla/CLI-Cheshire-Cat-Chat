@@ -1,6 +1,4 @@
-from rich.console import Console
-
-def greetings():
+def _greetings():
     output = "\n[bold green]🍃 😺 The Cheshire Cat has spawned!!! 😺 🍃 [/bold green]\n\n"
     output += "*****************************************\n"
     output += "| [i]Would you tell me, please,            |\n"
@@ -13,7 +11,8 @@ def greetings():
 
     return output
 
-def goodbye():
+
+def _goodbye():
     output = "\n[bold red]🍃 😺 The Cheshire Cat walks away!!! 😺 🍃 [/bold red]\n\n"
     output += "*****************************************\n"
     output += "| [i]Farewell, dear wanderer.              |\n"
@@ -26,10 +25,11 @@ def goodbye():
     return output
 
 
-def error(error):
+def _error(error):
     return "[red bold]Error: " + str(error) + "[/red bold]"
 
-def help():
+
+def _help():
     output = "- /help: Show this help message\n"
     output += "- /exit: Exit the chat\n"
     output += "- /send [i yellow]/path/to-your/file.txt[/i yellow]: Make the cat ingest a .txt, .md or .pdf file\n"
