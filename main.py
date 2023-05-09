@@ -33,14 +33,14 @@ class UserInputThread(Thread):
                 command = user_input.split()[0]
                 if command == '/exit' or command == '/close':
                     console.print("\n")
-                    console.rule("🛑 [bold red]CLOSING CONNECTION...[/bold red]")
+                    console.rule("🛑 [bold red]CLOSING CONNECTION...[/bold red]", style="red")
                     self.ws.close()  # Close the websocket connection
                     console.print(elements.goodbye(), justify="center")
                     os._exit(1)  # Exit the program
 
                 elif command == '/help':
                     console.print("\n")
-                    console.rule("[bold yellow] :robot: AVAILABLE COMMANDS[/bold yellow]")
+                    console.rule("[bold yellow] :robot: AVAILABLE COMMANDS[/bold yellow]", style="yellow")
                     console.print(elements.help())
 
                 elif command.startswith('/send'):
@@ -49,7 +49,7 @@ class UserInputThread(Thread):
                         file_path = user_input.split()[1]
                     except IndexError:
                         console.print("\n")
-                        console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                        console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                         console.print("Too few arguments! Command: [i yellow]/send path/to-your/file.txt[/i yellow]", justify="center")
                         continue
 
@@ -58,7 +58,7 @@ class UserInputThread(Thread):
                     if os.path.isfile(file_path):
                         if not file_path.endswith(('.txt', '.pdf', '.md')):
                             console.print("\n")
-                            console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                            console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                             console.print("File type not supported", justify="center")
                         else:
                             with open(file_path, 'rb') as f:
@@ -73,24 +73,24 @@ class UserInputThread(Thread):
                                 response = requests.post(rabbithole_url, headers=headers, files=files)
 
                                 console.print("\n")
-                                console.rule(":robot: [bold yellow]INFO[/bold yellow]")
+                                console.rule(":robot: [bold yellow]INFO[/bold yellow]", style="yellow")
                                 console.print(response.json()["info"], justify="center")
                     else:
                         console.print("\n")
-                        console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                        console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                         console.print("No valid file found", justify="center")
 
                 elif command == '/link':
                     if len(args) != 1:
                         console.print("\n")
-                        console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                        console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                         console.print("Too few or missing arguments! Command: [i yellow]/link https://pieroit.github.io/cheshire-cat/[/i yellow]",
                                       justify="center")
                     else:
                         link = args[0]
                         if not link.startswith(('http://', 'https://')):
                             console.print("\n")
-                            console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                            console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                             console.print("Invalid link format: must start with 'http://' or 'https://'", justify="center")
                         else:
                             try:
@@ -109,10 +109,9 @@ class UserInputThread(Thread):
                                 console.print(response.json()["info"])
                             except requests.exceptions.RequestException:
                                 console.print("\n")
-                                console.rule("⚠️ [bold red]WARNING![/bold red]")
+                                console.rule("⚠️  [bold red]WARNING![/bold red]", style="yellow")
                                 console.print("Error: Failed to parse link",
                                               justify="center")
-                                console.print("")
                 else:
                     # User entered a non-/ command, break out of the loop and send the message
                     break
@@ -130,8 +129,8 @@ class UserInputThread(Thread):
         def stop(self):
             self.waiting_for_input = False
 
-
-last_notification = ""
+# TODO: Add a check for the notification string in order to not print them when the user input thread is open
+# last_notification = ""
 
 def on_message(ws, message):
     # Stop the spinner and print the cat's response
