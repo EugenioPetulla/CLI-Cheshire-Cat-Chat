@@ -80,18 +80,21 @@ class UserInputThread(Thread):
                         console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                         console.print("No valid file found", justify="center")
 
-                elif command == '/link':
+
+                elif command.startswith('/link'):
                     if len(args) != 1:
                         console.print("\n")
                         console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
-                        console.print("Too few or missing arguments! Command: [i yellow]/link https://pieroit.github.io/cheshire-cat/[/i yellow]",
-                                      justify="center")
+                        console.print(
+                            "Too few or missing arguments! Command: [i yellow]/link https://pieroit.github.io/cheshire-cat/[/i yellow]",
+                            justify="center")
                     else:
                         link = args[0]
                         if not link.startswith(('http://', 'https://')):
                             console.print("\n")
                             console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
-                            console.print("Invalid link format: must start with 'http://' or 'https://'", justify="center")
+                            console.print("Invalid link format: must start with 'http://' or 'https://'",
+                                          justify="center")
                         else:
                             try:
                                 parsed_link = requests.get(link).url
@@ -104,14 +107,13 @@ class UserInputThread(Thread):
                                     'Content-Type': 'application/json',
                                     'Accept': 'application/json'
                                 }
-                                response = requests.post('http://localhost:1865/rabbithole/web/', headers=headers,
-                                                         json=data)
+
+                                response = requests.post('http://localhost:1865/rabbithole/web/', headers=headers, json=data)
                                 console.print(response.json()["info"])
                             except requests.exceptions.RequestException:
                                 console.print("\n")
                                 console.rule("⚠️  [bold red]WARNING![/bold red]", style="yellow")
-                                console.print("Error: Failed to parse link",
-                                              justify="center")
+                                console.print("Error: Failed to parse link", justify="center")
                 else:
                     # User entered a non-/ command, break out of the loop and send the message
                     break
