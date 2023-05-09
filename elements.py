@@ -21,7 +21,7 @@ def goodbye():
     output += "| inquisitive spirit alive, and perhaps |\n"
     output += "| one day you too will find your way    |\n"
     output += "|                 back to Wonderland.[/i]   |\n"
-    output += "\n*****************************************\n"
+    output += "*****************************************\n"
 
     return output
 
