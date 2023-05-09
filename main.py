@@ -1,6 +1,7 @@
 import os
 import json
 import elements
+import requests
 from threading import Thread
 from websocket import WebSocketApp
 import readline
@@ -40,6 +41,42 @@ class UserInputThread(Thread):
                     console.print("\n")
                     console.rule("[bold yellow] :robot: AVAILABLE COMMANDS[/bold yellow]")
                     console.print(elements.help())
+                elif command.startswith('/send'):
+                    # Check for valid file path
+                    try:
+                        file_path = user_input.split()[1]
+                    except IndexError:
+                        console.print("\n")
+                        console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                        console.print("Too few arguments! Command: [i yellow]/send path/to-your/file.txt[/i yellow]", justify="center")
+                        continue
+
+                    rabbithole_url = 'http://localhost:1865/rabbithole/'
+
+                    if os.path.isfile(file_path):
+                        if not file_path.endswith(('.txt', '.pdf', '.md')):
+                            console.print("\n")
+                            console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                            console.print("File type not supported", justify="center")
+                        else:
+                            with open(file_path, 'rb') as f:
+                                files = {
+                                    'file': (os.path.basename(file_path), f, 'text/plain')
+                                }
+
+                                headers = {
+                                    'accept': 'application/json',
+                                }
+
+                                response = requests.post(rabbithole_url, headers=headers, files=files)
+
+                                console.print("\n")
+                                console.rule(":robot: [bold yellow]INFO[/bold yellow]")
+                                console.print(response.json()["info"], justify="center")
+                    else:
+                        console.print("\n")
+                        console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                        console.print("No valid file found", justify="center")
                 else:
                     # User entered a non-/ command, break out of the loop and send the message
                     break
