@@ -37,10 +37,12 @@ class UserInputThread(Thread):
                     self.ws.close()  # Close the websocket connection
                     console.print(elements.goodbye(), justify="center")
                     os._exit(1)  # Exit the program
+
                 elif command == '/help':
                     console.print("\n")
                     console.rule("[bold yellow] :robot: AVAILABLE COMMANDS[/bold yellow]")
                     console.print(elements.help())
+
                 elif command.startswith('/send'):
                     # Check for valid file path
                     try:
@@ -77,6 +79,40 @@ class UserInputThread(Thread):
                         console.print("\n")
                         console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
                         console.print("No valid file found", justify="center")
+
+                elif command == '/link':
+                    if len(args) != 1:
+                        console.print("\n")
+                        console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                        console.print("Too few or missing arguments! Command: [i yellow]/link https://pieroit.github.io/cheshire-cat/[/i yellow]",
+                                      justify="center")
+                    else:
+                        link = args[0]
+                        if not link.startswith(('http://', 'https://')):
+                            console.print("\n")
+                            console.rule("⚠️ [bold yellow]WARNING![/bold yellow]")
+                            console.print("Invalid link format: must start with 'http://' or 'https://'", justify="center")
+                        else:
+                            try:
+                                parsed_link = requests.get(link).url
+                                data = {
+                                    'url': parsed_link,
+                                    'chunk_size': 400,
+                                    'chunk_overlap': 100
+                                }
+                                headers = {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json'
+                                }
+                                response = requests.post('http://localhost:1865/rabbithole/web/', headers=headers,
+                                                         json=data)
+                                console.print(response.json()["info"])
+                            except requests.exceptions.RequestException:
+                                console.print("\n")
+                                console.rule("⚠️ [bold red]WARNING![/bold red]")
+                                console.print("Error: Failed to parse link",
+                                              justify="center")
+                                console.print("")
                 else:
                     # User entered a non-/ command, break out of the loop and send the message
                     break
@@ -95,6 +131,7 @@ class UserInputThread(Thread):
             self.waiting_for_input = False
 
 
+last_notification = ""
 
 def on_message(ws, message):
     # Stop the spinner and print the cat's response
