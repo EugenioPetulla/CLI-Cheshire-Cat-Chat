@@ -9,6 +9,7 @@ def greetings():
     output += "| [i]The Cheshire Cat: That depends a      |\n"
     output += "| good deal on where you want to get to.[/i]|\n"
     output += "*****************************************\n"
+    output += "\n:robot: [bold yellow]Type[/bold yellow] [i]/help[/i] [yellow]to receive the list of available commands[/yellow]\n"
 
     return output
 
@@ -20,7 +21,7 @@ def goodbye():
     output += "| inquisitive spirit alive, and perhaps |\n"
     output += "| one day you too will find your way    |\n"
     output += "|                 back to Wonderland.[/i]   |\n"
-    output += "*****************************************\n"
+    output += "\n*****************************************\n"
 
     return output
 
