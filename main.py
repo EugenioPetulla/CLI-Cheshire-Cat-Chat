@@ -2,6 +2,7 @@ import os
 import json
 import elements
 import requests
+import readline
 from threading import Thread
 from websocket import WebSocketApp
 from rich.console import Console
