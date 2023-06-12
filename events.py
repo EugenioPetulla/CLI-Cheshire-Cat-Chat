@@ -19,6 +19,9 @@ class Events:
 
         user_thread = UserInputThread(ws, self.console, self.spinner)
         cat_response = json.loads(message)
+        if cat_response["error"]:
+            self.on_error(ws, "Connection issues")
+            return
         user_thread.update_console(cat_response["content"])
 
         # Start the user input thread to ask for new input from the user
@@ -46,4 +49,5 @@ class Events:
         user_thread.start()
 
     def on_close(self, ws, close_status_code, close_msg):
-        pass
+        """Close session."""
+        ws.close()

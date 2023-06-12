@@ -12,6 +12,7 @@ from halo import Halo
 
 
 def cat_chat():
+    """Init the CLI client."""
     console = Console()
 
     spinner = Halo(text="The Cheshire Cat is thinking...", text_color="yellow", spinner="clock")

@@ -7,10 +7,10 @@ import os
 import json
 import elements
 
-"""Input threads."""
-
 
 class UserInputThread(Thread):
+    """Input threads."""
+
     def __init__(self, ws, console, spinner):
         Thread.__init__(self)
         self.ws = ws
@@ -89,7 +89,7 @@ class UserInputThread(Thread):
                         self.console.print("\n")
                         self.console.rule("⚠️  [bold yellow]WARNING![/bold yellow]", style="yellow")
                         self.console.print(
-                            "Too few or missing arguments! Command: [i yellow]/link https://pieroit.github.io/cheshire-cat/[/i yellow]",
+                            "Too few or missing arguments! Command: [i yellow]/link https://cheshire-cat-ai.github.io/docs/[/i yellow]",
                             justify="center",
                         )
                     else:
