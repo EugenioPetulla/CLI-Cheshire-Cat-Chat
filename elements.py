@@ -1,3 +1,6 @@
+"""Utils."""
+
+
 def _greetings():
     output = "\n[bold green]🍃 😺 The Cheshire Cat has spawned!!! 😺 🍃 [/bold green]\n\n"
     output += "*****************************************\n"
@@ -33,6 +36,8 @@ def _help():
     output = "- /help: Show this help message\n"
     output += "- /exit: Exit the chat\n"
     output += "- /send [i yellow]/path/to-your/file.txt[/i yellow]: Make the cat ingest a .txt, .md or .pdf file\n"
-    output += "- /link [i yellow]https://pieroit.github.io/cheshire-cat/[/i yellow] : Make the cat ingest a website page"
+    output += (
+        "- /link [i yellow]https://pieroit.github.io/cheshire-cat/[/i yellow] : Make the cat ingest a website page"
+    )
 
     return output
