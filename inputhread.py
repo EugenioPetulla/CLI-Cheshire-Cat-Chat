@@ -7,6 +7,8 @@ import os
 import json
 import elements
 
+"""Input threads."""
+
 
 class UserInputThread(Thread):
     def __init__(self, ws, console, spinner):
@@ -16,12 +18,13 @@ class UserInputThread(Thread):
         self.spinner = spinner
 
     def update_console(self, message):
-        # This method will update the console with the cat's response message
+        """Update the console with the cat's response message."""
         self.console.print("\n")
         self.console.rule("🐱 [bold magenta]CHESHIRE CAT:[/bold magenta] ", style="magenta")
         self.console.print(Markdown(message))
 
     def run(self):
+        """Interact with the user."""
         while True:
             self.console.print("\n")
             self.console.rule("👤 [bold]HUMAN[/bold]", style="white")

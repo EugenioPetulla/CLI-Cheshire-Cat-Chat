@@ -11,9 +11,7 @@ from halo import Halo
 # last_notification = ""
 
 
-# TODO: Def an on_close() function
 def cat_chat():
-    # Creating a console for rich output
     console = Console()
 
     spinner = Halo(text="The Cheshire Cat is thinking...", text_color="yellow", spinner="clock")
@@ -26,6 +24,7 @@ def cat_chat():
             on_error=event.on_error,
             on_open=event.on_open,
             on_ping=event.on_ping,
+            on_close=event.on_close,
         )
         # Keep running the connection
         ws.run_forever()
